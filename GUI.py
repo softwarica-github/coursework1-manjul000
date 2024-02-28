@@ -44,6 +44,19 @@ class CrawlerGUI:
             master.grid_rowconfigure(i, weight=1)
         for j in range(3):
             master.grid_columnconfigure(j, weight=1)
+    def export_to_text(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+        if file_path:
+            with open(file_path, 'w') as file:
+                file.write(self.text_area.get(1.0, tk.END))
+
+    def export_to_csv(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+        if file_path:
+            with open(file_path, 'w') as file:
+                lines = self.text_area.get(1.0, tk.END).split('\n')
+                for line in lines:
+                    file.write(line.strip() + '\n')
 
 def main():
     root = tk.Tk()
