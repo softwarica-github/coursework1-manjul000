@@ -58,6 +58,31 @@ class CrawlerGUI:
                 for line in lines:
                     file.write(line.strip() + '\n')
 
+    def start_crawling(self):
+        start_url = self.entry_url.get()
+        depth = int(self.entry_depth.get())
+
+        if not start_url:
+            messagebox.showerror("Error", "Please enter a starting URL.")
+            return
+
+        if depth <= 0:
+            messagebox.showerror("Error", "Please enter a valid depth (greater than 0).")
+            return
+
+        self.text_area.delete(1.0, tk.END)  # Clear previous output
+
+        visited = set()
+        output_lock = threading.Lock()
+
+        # Extract domain from starting URL
+        domain = urllib.parse.urlparse(start_url).netloc
+
+        # Using ThreadPoolExecutor for concurrent crawling
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            crawl_result = crawl(start_url, domain, depth, visited, output_lock)
+            self.text_area.insert(tk.END, crawl_result)
+
 def main():
     root = tk.Tk()
     app = CrawlerGUI(root)
